@@ -1,4 +1,3 @@
-# Content-Aware-caching-algo
 # Content-Aware Caching Algorithm for Efficient File Access
 
 ## Overview
