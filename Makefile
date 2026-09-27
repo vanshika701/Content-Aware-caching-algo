@@ -1,30 +1,27 @@
-# Makefile for Content-Aware Caching Algorithm
+# Makefile for Content-Aware Caching Algorithm (Java)
 
-CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra -O2
-LDFLAGS = 
+JAVAC = javac
+JAVA = java
+SRC = $(wildcard src/cache/*.java)
+OUT = out
 
 # Main targets
-all: caching_system test_cache
+all: build
 
-# Main executable
-caching_system: main.cpp content_aware_cache.cpp content_aware_cache.h
-	$(CXX) $(CXXFLAGS) -o $@ main.cpp content_aware_cache.cpp $(LDFLAGS)
+# Compile all sources
+build: $(SRC)
+	$(JAVAC) -d $(OUT) $(SRC)
 
-# Test program
-test_cache: test_cache.cpp content_aware_cache.cpp content_aware_cache.h
-	$(CXX) $(CXXFLAGS) -o $@ test_cache.cpp content_aware_cache.cpp $(LDFLAGS)
+# Run the LRU vs content-aware benchmark (optional: make test SEED=42)
+test: build
+	$(JAVA) -cp $(OUT) cache.TestCache $(SEED)
+
+# Run the interactive command-line interface
+run: build
+	$(JAVA) -cp $(OUT) cache.Main
 
 # Clean up
 clean:
-	rm -f caching_system test_cache *.o
+	rm -rf $(OUT) test_files
 
-# Run tests
-test: test_cache
-	./test_cache
-
-# Run main program
-run: caching_system
-	./caching_system
-
-.PHONY: all clean test run
+.PHONY: all build test run clean

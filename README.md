@@ -23,51 +23,53 @@ This project implements a heuristic-based Content-Aware Caching Algorithm that o
 
 ## Implementation Details
 
-The caching system is implemented in C++ as a user-space library that provides file I/O operations through a caching layer. The core components include:
+The caching system is implemented in Java as a user-space library that provides file I/O operations through a caching layer. The core components include:
 
 - **ContentAwareCache**: Main cache manager that handles file storage, retrieval, and eviction decisions
-- **CacheFile**: File handle for cached files, similar to FILE* in standard I/O
-- **Test Framework**: Tools to generate test data and measure performance
+- **CacheFile**: File handle for cached files (`read`, `write`, `seek`, `tell`, `flush`, `close`)
+- **Test Framework**: Tools to generate test data and measure performance against a standard LRU cache
 
 ## Project Structure
 
 ```
-├── content_aware_cache.h     # Core cache implementation header
-├── content_aware_cache.cpp   # Implementation of the cache
-├── main.cpp                  # Interactive command-line interface
-├── test_cache.cpp            # Performance testing framework
-├── Makefile                  # Build configuration
-└── README.md                 # This documentation
+├── src/cache/
+│   ├── ContentAwareCache.java  # Cache manager: scoring, eviction, statistics
+│   ├── CacheFile.java          # File handle for cached files
+│   ├── CacheEntry.java         # A cached file (data, metadata, score)
+│   ├── FileMetadata.java       # File path, type, size, modification time
+│   ├── AccessStats.java        # Access count and last-access time
+│   ├── Main.java               # Interactive command-line interface
+│   └── TestCache.java          # Performance testing framework (LRU vs content-aware)
+├── Makefile                    # Build configuration
+└── README.md                   # This documentation
 ```
 
 ## Building and Running
 
 ### Prerequisites
 
-- C++17 compatible compiler (GCC or Clang)
-- Standard C++ libraries including filesystem support
+- JDK 17 or newer
 
-### Build Instructions
+### Build and Run
 
 ```bash
-# Build everything
-make all
+# Build everything (compiled classes go to out/)
+make
 
-# Build just the main program
-make caching_system
+# Run the interactive command-line interface
+make run
 
-# Build just the test program
-make test_cache
+# Run the test suite (optional SEED makes the run reproducible)
+make test
+make test SEED=42
 ```
 
-### Running the Program
+Without `make`:
 
 ```bash
-# Run the interactive command-line interface
-./caching_system
-
-# Run the test suite
-./test_cache
+javac -d out src/cache/*.java
+java -cp out cache.Main            # interactive CLI
+java -cp out cache.TestCache 42    # benchmark (seed is optional)
 ```
 
 ## Usage
@@ -87,11 +89,18 @@ The command-line interface supports the following commands:
 
 ## Performance Evaluation
 
-The test framework (`test_cache.cpp`) generates random test files and access patterns to measure the performance of the content-aware caching algorithm compared to standard LRU caching. It reports:
+The test framework (`TestCache.java`) generates random test files and access patterns to measure the performance of the content-aware caching algorithm compared to standard LRU caching. It reports:
 
 - Cache hit rates
 - Disk I/O operations
 - Execution time
+
+Sample results (100 files, cache = 25% of total data size, `SEED=42`):
+
+| Workload | LRU hit rate | Content-aware hit rate |
+|---|---|---|
+| Realistic (20,000 accesses) | 46.4% | 74.5% |
+| Important-files burst (10,000 accesses) | 78.3% | 93.2% |
 
 ## Extending the Project
 
