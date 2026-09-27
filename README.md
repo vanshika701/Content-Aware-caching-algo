@@ -111,13 +111,5 @@ Possible extensions include:
 3. Developing an adaptive learning component to automatically adjust priorities
 4. Creating a Linux kernel module version for deeper OS integration
 
-## Authors
-
-- Aditya Sharma (2310110390)
-- Vanshika Srivastava (2310110339)
-- Shruti Sharma (2310110715)
-- Vatsal Saxena (2310110345)
-
-## License
 
 This project is released under the MIT License.
